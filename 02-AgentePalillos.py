@@ -154,6 +154,25 @@ def TurnoComputadorDificil(palillos, quitas):
 
     return palillos_quitar
 
+# Múltiplos
+
+
+def Multiplos(palillos, quitas):
+    palillos_quitar = None
+
+    while palillos_quitar is None or palillos_quitar > palillos:
+        if palillos <= quitas:
+            palillos_quitar = palillos
+        elif palillos % (quitas+1) == 0:
+            palillos_quitar = random.randint(1, 2)
+        else:
+            palillos_quitar = palillos % (quitas+1)
+        print("   El ordenador retira {} de {} palillos restantes".format(
+            palillos_quitar, palillos))
+        input("   Presiona Enter para continuar")
+
+    return palillos_quitar
+
 # Fin de la partida
 
 
@@ -200,7 +219,8 @@ def main():
             if nivel == "1":
                 jugada = TurnoComputadoraFacil(palillos, quitas)
             elif nivel == "2":
-                jugada = TurnoComputadorDificil(palillos, quitas)
+                # jugada = TurnoComputadorDificil(palillos, quitas)
+                jugada = Multiplos(palillos, quitas)
             turno = 1
 
         palillos -= jugada
