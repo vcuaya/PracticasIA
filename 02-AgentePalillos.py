@@ -3,10 +3,9 @@ from os import system, name
 import random
 import time
 import os
+from tkinter import NO
 
 # Definición de función Clear
-
-
 def Clear():
     # Windows
     if name == 'nt':
@@ -22,12 +21,16 @@ Devuelve dos valores aleatorios:
     Palillos totales (16 a 23)
     Número de palillos a quitar (3 a 5)
 """
-
-
-def sorteo_opciones():
-    palillos = random.randint(16, 23)
-    quitas = random.randint(3, 5)
-
+def sorteo_opciones(nivel):
+    palillos = 1
+    quitas = 0
+    if nivel == 3:
+        while palillos % (quitas + 1) == 0:
+            palillos = random.randint(16, 23)
+            quitas = random.randint(3, 5)
+    else:
+        palillos = random.randint(16, 23)
+        quitas = random.randint(3, 5)
     return palillos, quitas
 
 
@@ -37,12 +40,13 @@ def Inicio():
     print()
     print("                         1) Fácil")
     print("                         2) Difícil")
+    print("                         3) Experto")
     print()
     print("   *******************************************************")
     print()
     nivel = ""
-    while nivel != "1" and nivel != "2":
-        nivel = input("Elige el nivel deseado (1 / 2): ")
+    while nivel != "1" and nivel != "2" and nivel != "3":
+        nivel = input("Elige el nivel deseado (1 / 2 / 3): ")
     return nivel
 
 
@@ -87,9 +91,8 @@ def Tablero(palillos, quitas):
     print("   Palillos restantes: {}".format(palillos))
     print()
 
+
 # Movimiento del jugador
-
-
 def TurnoJugador(palillos, quitas):
     if quitas == 3:
         quitas = ("1", "2", "3")
@@ -97,7 +100,6 @@ def TurnoJugador(palillos, quitas):
         quitas = ("1", "2", "3", "4")
     elif quitas == 5:
         quitas = ("1", "2", "3", "4", "5")
-
     q = input("   Palillos a quitar: ")
     while q not in quitas or int(q) > palillos:
         if q not in quitas:
@@ -111,8 +113,6 @@ def TurnoJugador(palillos, quitas):
 # Turno de la computadora
 
 # Fácil
-
-
 def TurnoComputadoraFacil(palillos, quitas):
     if palillos <= quitas:
         palillos_quitar = palillos
@@ -128,8 +128,6 @@ def TurnoComputadoraFacil(palillos, quitas):
     return palillos_quitar
 
 # Difícil
-
-
 def TurnoComputadorDificil(palillos, quitas):
     palillos_quitar = None
 
@@ -154,29 +152,26 @@ def TurnoComputadorDificil(palillos, quitas):
 
     return palillos_quitar
 
-# Múltiplos
-
-
-def Multiplos(palillos, quitas):
+# Experto
+def Experto(palillos, quitas):
     palillos_quitar = None
 
     while palillos_quitar is None or palillos_quitar > palillos:
         if palillos <= quitas:
             palillos_quitar = palillos
-        elif palillos % (quitas+1) == 0:
-            palillos_quitar = random.randint(1, 2)
-        else:
+        elif palillos % (quitas+1) != 0:
             palillos_quitar = palillos % (quitas+1)
+        else:
+            palillos_quitar = random.randint(1, 2)
         print("   El ordenador retira {} de {} palillos restantes".format(
             palillos_quitar, palillos))
         input("   Presiona Enter para continuar")
 
     return palillos_quitar
 
+
 # Fin de la partida
-
-
-def FInalPartida(turno):
+def FinalPartida(turno):
     if turno == 2:
         mensaje1 = "   Has tomado el ultimo palillo"
         mensaje2 = "   *** Has ganado ***"
@@ -192,14 +187,13 @@ def FInalPartida(turno):
     print("{}".format(mensaje2))
     print()
 
+
 # Función principal
-
-
 def main():
-    palillos, quitas = sorteo_opciones()
+    nivel = Inicio()
     Clear()
 
-    nivel = Inicio()
+    palillos, quitas = sorteo_opciones(nivel)
     Clear()
 
     turno = Instrucciones(palillos, quitas)
@@ -219,15 +213,16 @@ def main():
             if nivel == "1":
                 jugada = TurnoComputadoraFacil(palillos, quitas)
             elif nivel == "2":
-                # jugada = TurnoComputadorDificil(palillos, quitas)
-                jugada = Multiplos(palillos, quitas)
+                jugada = TurnoComputadorDificil(palillos, quitas)
+            elif nivel == "3":
+                jugada = Experto(palillos, quitas)
             turno = 1
 
         palillos -= jugada
         Clear()
 
         if palillos == 0:
-            FInalPartida(turno)
+            FinalPartida(turno)
             jugando = False
 
 
